@@ -4,8 +4,12 @@ My custom NVF configuration for nvim
 
 ## Want to try it out
 
-If you have the Nix package manager or are using NixOS with flakes just run
-`nix run https://github.com/banana3216-2025/nvf-config` in your favorite
+If you have the Nix package manager or are using NixOS with flakes 
+just run
+```
+nix run https://github.com/banana3216-2025/nvf-config
+```
+in your favorite
 terminal
 
 ### features
