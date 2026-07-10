@@ -326,6 +326,11 @@
           # This appends the exact 4-space argument to the binary command array
           prepend_args = ["-style={BasedOnStyle: LLVM, IndentWidth: 4, TabWidth: 4}"];
         };
+
+        prettier = {
+          # Make HTML use 2 space tabs
+          argsAfter = ["--tab-width" "2"];
+        };
       };
     };
 
