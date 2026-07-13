@@ -231,6 +231,12 @@
         dap.enable = true;
       };
 
+      luau = {
+        enable = true;
+        lsp.enable = true;
+        treesitter.enable = true;	
+      };
+
       qml.enable = true;
     };
 
