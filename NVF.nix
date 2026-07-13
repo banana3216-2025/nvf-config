@@ -231,10 +231,10 @@
         dap.enable = true;
       };
 
-      luau = {
+      lua = {
         enable = true;
         lsp.enable = true;
-        treesitter.enable = true;	
+        treesitter.enable = true;
       };
 
       qml.enable = true;
@@ -246,6 +246,9 @@
         python3Packages.debugpy
         vscode-js-debug # JavaScript/TypeScript Debugger
         delve # Go Debugger
+
+        luau # Roblox Lua
+        luau-lsp
 
         lazygit # for the popup
       ])
@@ -292,6 +295,11 @@
 
     lsp.servers.qmlls = {
       cmd = lib.mkForce ["qml-language-server"];
+    };
+
+    lsp.servers.luau-lsp = {
+      cmd = lib.mkForce ["luau-lsp" "lsp"];
+      filetypes = ["luau" "lua"];
     };
 
     telescope.enable = true;
