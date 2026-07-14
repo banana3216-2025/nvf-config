@@ -301,6 +301,13 @@
       cmd = lib.mkForce ["luau-lsp" "lsp"];
       filetypes = ["luau" "lua"];
 
+      root_dir = ''
+        function(filename, bufnr)
+          local util = require('lspconfig.util')
+          return util.root_pattern('default.project.json', '.git')(filename)
+        end
+      '';
+
       settings = {
         "luau-lsp" = {
           platform = {
