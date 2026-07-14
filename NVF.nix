@@ -297,29 +297,31 @@
       cmd = lib.mkForce ["qml-language-server"];
     };
 
-    lsp.servers.luau-lsp = {
-      cmd = lib.mkForce ["luau-lsp" "lsp"];
-      filetypes = ["luau" "lua"];
+    luaConfigRC.luau-lsp-setup = ''
+      -- Ensure lspconfig is loaded before configuring the client
+      local lspconfig = require('lspconfig')
 
-      root_dir = ''
-        function(filename, bufnr)
-          local util = require('lspconfig.util')
-          return util.root_pattern('default.project.json', '.git')(filename)
-        end
-      '';
+      lspconfig.luau-lsp.setup({
+        cmd = { "luau-lsp", "lsp" },
+        filetypes = { "luau", "lua" },
 
-      settings = {
-        "luau-lsp" = {
-          platform = {
-            type = "roblox";
-          };
-          sourcemap = {
-            enabled = true;
-            autogenerate = true;
-          };
-        };
-      };
-    };
+        -- Force standard file system checks to find your default.project.json root path
+        root_dir = lspconfig.util.root_pattern("default.project.json", ".git"),
+
+        -- Pass parameters natively to force the parsing client to use the roblox profile
+        settings = {
+          ["luau-lsp"] = {
+            platform = {
+              type = "roblox",
+            },
+            sourcemap = {
+              enabled = true,
+              autogenerate = true,
+            },
+          },
+        },
+      })
+    '';
 
     telescope.enable = true;
     filetree.neo-tree.enable = true;
