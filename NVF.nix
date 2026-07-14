@@ -301,16 +301,14 @@
       cmd = lib.mkForce ["luau-lsp" "lsp"];
       filetypes = ["luau" "lua"];
 
-      settings = {
-        "luau-lsp" = {
-          platform = {
-            type = "roblox";
-          };
-          # Optional: Enable sourcemap tracking for auto-completing game paths
-          sourcemap = {
-            enabled = true;
-            autogenerate = true;
-          };
+      init_options = {
+        platform = {
+          type = "roblox";
+        };
+        # Recommended: Allows your LSP to resolve Instance paths via Rojo
+        sourcemap = {
+          enabled = true;
+          autogenerate = true;
         };
       };
     };
