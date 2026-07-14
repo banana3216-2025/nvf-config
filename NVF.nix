@@ -300,6 +300,19 @@
     lsp.servers.luau-lsp = {
       cmd = lib.mkForce ["luau-lsp" "lsp"];
       filetypes = ["luau" "lua"];
+
+      settings = {
+        "luau-lsp" = {
+          platform = {
+            type = "roblox";
+          };
+          # Optional: Enable sourcemap tracking for auto-completing game paths
+          sourcemap = {
+            enabled = true;
+            autogenerate = true;
+          };
+        };
+      };
     };
 
     telescope.enable = true;
