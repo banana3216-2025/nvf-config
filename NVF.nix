@@ -297,15 +297,23 @@
       cmd = lib.mkForce ["qml-language-server"];
     };
 
-    lsp.servers.luau-lsp = {
+    lsp.servers.luau = {
       enable = true;
-      cmd = ["${pkgs.luau-lsp}/bin/luau-lsp" "lsp"];
-      filetypes = ["luau"];
-      root_markers = ["default.project.json" ".git"];
+      cmd = ["luau-lsp" "lsp"];
+      filetypes = ["luau" "lua"];
+
+      rootMarkers = [
+        ".git"
+        "default.project.json"
+      ];
 
       settings = {
-        "luau-lsp.platform.type" = "roblox";
-        "luau-lsp.sourcemap.enabled" = true;
+        "luau-lsp" = {
+          platform.type = "roblox";
+
+          sourcemap.enabled = true;
+          types.roblox = true;
+        };
       };
     };
 
