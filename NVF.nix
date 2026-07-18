@@ -1,6 +1,5 @@
 {
   qml-go-lsp,
-  lib,
   pkgs,
   ...
 }: {
@@ -249,6 +248,8 @@
 
         luau # Roblox Lua
         luau-lsp
+        rojo
+        stylua
 
         lazygit # for the popup
       ])
@@ -256,63 +257,56 @@
         qml-go-lsp.packages.${pkgs.stdenv.hostPlatform.system}.default # qml
       ];
 
-    luaConfigRC.dap-custom-adapters = ''
-      local dap = require('dap')
+    lsp = {
+      servers = {
+        qmlls = {
+          enable = true;
+          cmd = pkgs.lib.mkForce ["qml-language-server"];
+        };
 
-      -- JavaScript / TypeScript Adapter Routing
-      -- This explicitly hooks NVF up to the package path provided by vscode-js-debug
-      if not dap.adapters["pwa-node"] then
-        dap.adapters["pwa-node"] = {
-          type = "server",
-          host = "localhost",
-          port = "''${port}",
-          executable = {
-            command = "js-debug-adapter", -- Provided cleanly by pkgs.vscode-js-debug
-            args = { "''${port}" },
-          }
-        }
-      end
+        luau_lsp = {
+          enable = true;
 
-      -- Lightweight, Native Lua Environment Debugging Setup
-      dap.adapters.nlua = function(callback, config)
-        callback({ type = 'server', host = config.host or "127.0.0.1", port = config.port or 8086 })
-      end
+          cmd = let
+            # Full, correct URL to JohnnyMorganz/luau-lsp types script
+            globalTypes = pkgs.fetchurl {
+              url = "https://raw.githubusercontent.com/JohnnyMorganz/luau-lsp/main/scripts/globalTypes.d.luau";
+              hash = "sha256-BsvGqScsG7rOeIDeoqFrS8LgG6+yXn51Puv0zoxngkg=";
+            };
 
-      dap.configurations.lua = {
-        {
-          type = 'nlua',
-          request = 'attach',
-          name = "Attach to running Neovim instance",
-          host = function()
-            return vim.fn.input('Host: ') or "127.0.0.1"
-          end,
-          port = function()
-            return tonumber(vim.fn.input('Port [8086]: ')) or 8086
-          end,
-        },
-      }
-    '';
+            # Full, correct URL to MaximumADHD/Roblox-Client-Tracker API documentation
+            apiDocs = pkgs.fetchurl {
+              url = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/roblox/api-docs/en-us.json";
+              hash = "sha256-wFK30NLkaGqOcPkX3/UCpNXy7BetczvQgfIp0ATPoGc=";
+            };
+          in [
+            "luau-lsp"
+            "lsp"
+            "--definitions=${globalTypes}"
+            "--docs=${apiDocs}"
+          ];
 
-    lsp.servers.qmlls = {
-      cmd = lib.mkForce ["qml-language-server"];
-    };
+          filetypes = ["luau"];
 
-    lsp.servers.luau = {
-      enable = true;
-      cmd = ["luau-lsp" "lsp"];
-      filetypes = ["luau" "lua"];
-
-      rootMarkers = [
-        ".git"
-        "default.project.json"
-      ];
-
-      settings = {
-        "luau-lsp" = {
-          platform.type = "roblox";
-
-          sourcemap.enabled = true;
-          types.roblox = true;
+          setupOpts = {
+            root_dir = ''
+              require('lspconfig.util').root_pattern(".git", "default.project.json")
+            '';
+            settings = {
+              "luau-lsp" = {
+                platform = {
+                  type = "roblox";
+                };
+                sourcemap = {
+                  enabled = true;
+                  autogenerate = true;
+                };
+                types = {
+                  roblox = true;
+                };
+              };
+            };
+          };
         };
       };
     };
