@@ -268,13 +268,11 @@
           enable = true;
 
           cmd = let
-            # Full, correct URL to JohnnyMorganz/luau-lsp types script
             globalTypes = pkgs.fetchurl {
               url = "https://raw.githubusercontent.com/JohnnyMorganz/luau-lsp/main/scripts/globalTypes.d.luau";
               hash = "sha256-BsvGqScsG7rOeIDeoqFrS8LgG6+yXn51Puv0zoxngkg=";
             };
 
-            # Full, correct URL to MaximumADHD/Roblox-Client-Tracker API documentation
             apiDocs = pkgs.fetchurl {
               url = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/roblox/api-docs/en-us.json";
               hash = "sha256-wFK30NLkaGqOcPkX3/UCpNXy7BetczvQgfIp0ATPoGc=";
@@ -299,7 +297,8 @@
                 };
                 sourcemap = {
                   enabled = true;
-                  autogenerate = true;
+                  autogenerate = false;
+                  sourcemapFile = "sourcemap.json";
                 };
                 types = {
                   roblox = true;
