@@ -403,7 +403,7 @@
       {
         key = "<C-b>";
         mode = "n";
-        action = "<C-b>zz";
+        action = "<C-u>zz";
         silent = true;
         desc = "Scrolls up but keeps cursor in center";
       }
