@@ -1,8 +1,4 @@
-{
-  qml-go-lsp,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   vim = {
     extraLuaFiles = [
       (pkgs.writeText "dashboard-banner.lua" ''
@@ -136,13 +132,7 @@
         path = "[Path]";
         nvim_lsp = "[LSP]";
         luasnip = "[Snippet]";
-      };
-    };
-
-    debugger = {
-      nvim-dap = {
-        enable = true;
-        ui.enable = true;
+        snippet = "[Snippet]";
       };
     };
 
@@ -171,144 +161,16 @@
         format.type = ["clang-format"];
       };
 
-      python = {
-        enable = true;
-        lsp.enable = true;
-        treesitter.enable = true;
-        dap.enable = true;
-      };
-
-      typescript = {
-        enable = true;
-        lsp.enable = true;
-        treesitter.enable = true;
-
-        format.enable = true;
-        format.type = ["biome"];
-      };
-
-      css = {
-        enable = true;
-        lsp.enable = true;
-        treesitter.enable = true;
-      };
-
-      html = {
-        enable = true;
-        lsp.enable = true;
-        treesitter.enable = true;
-      };
-
       nix = {
         enable = true;
         lsp.enable = true;
         treesitter.enable = true;
       };
-
-      markdown = {
-        enable = true;
-        lsp.enable = true;
-        treesitter.enable = true;
-      };
-
-      glsl = {
-        enable = true;
-        treesitter.enable = true;
-      };
-
-      rust = {
-        enable = true;
-        lsp.enable = true;
-        treesitter.enable = true;
-        dap.enable = true;
-      };
-
-      go = {
-        enable = true;
-        lsp.enable = true;
-        treesitter.enable = true;
-        dap.enable = true;
-      };
-
-      lua = {
-        enable = true;
-        lsp.enable = true;
-        treesitter.enable = true;
-      };
-
-      qml.enable = true;
     };
 
-    extraPackages =
-      (with pkgs; [
-        lldb_19 # C / C++ / Rust
-        python3Packages.debugpy
-        vscode-js-debug # JavaScript/TypeScript Debugger
-        delve # Go Debugger
-
-        luau # Roblox Lua
-        luau-lsp
-        rojo
-        stylua
-
-        lazygit # for the popup
-      ])
-      ++ [
-        qml-go-lsp.packages.${pkgs.stdenv.hostPlatform.system}.default # qml
-      ];
-
-    lsp = {
-      servers = {
-        qmlls = {
-          enable = true;
-          cmd = pkgs.lib.mkForce ["qml-language-server"];
-        };
-
-        luau_lsp = {
-          enable = true;
-
-          cmd = let
-            globalTypes = pkgs.fetchurl {
-              url = "https://raw.githubusercontent.com/JohnnyMorganz/luau-lsp/main/scripts/globalTypes.d.luau";
-              hash = "sha256-BsvGqScsG7rOeIDeoqFrS8LgG6+yXn51Puv0zoxngkg=";
-            };
-
-            apiDocs = pkgs.fetchurl {
-              url = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/roblox/api-docs/en-us.json";
-              hash = "sha256-wFK30NLkaGqOcPkX3/UCpNXy7BetczvQgfIp0ATPoGc=";
-            };
-          in [
-            "luau-lsp"
-            "lsp"
-            "--definitions=${globalTypes}"
-            "--docs=${apiDocs}"
-          ];
-
-          filetypes = ["luau"];
-
-          setupOpts = {
-            root_dir = ''
-              require('lspconfig.util').root_pattern(".git", "default.project.json")
-            '';
-            settings = {
-              "luau-lsp" = {
-                platform = {
-                  type = "roblox";
-                };
-                sourcemap = {
-                  enabled = true;
-                  autogenerate = false;
-                  sourcemapFile = "sourcemap.json";
-                };
-                types = {
-                  roblox = true;
-                };
-              };
-            };
-          };
-        };
-      };
-    };
+    extraPackages = with pkgs; [
+      lazygit # for the popup
+    ];
 
     telescope.enable = true;
     filetree.neo-tree.enable = true;
@@ -430,14 +292,6 @@
         action = ":bprev<CR>";
         silent = true;
         desc = "moves to the next buffer with tab moving keys";
-      }
-
-      {
-        key = "<leader>lg";
-        mode = "n";
-        action = "<cmd>lua require('toggleterm.terminal').Terminal:new({ cmd = 'lazygit', hidden = true }):toggle()<CR>";
-        silent = true;
-        desc = "Opens lazygit";
       }
 
       {

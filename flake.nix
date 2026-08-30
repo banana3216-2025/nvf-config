@@ -16,14 +16,23 @@
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
 
-    Neovim = nvf.lib.neovimConfiguration {
+    main = nvf.lib.neovimConfiguration {
       inherit pkgs;
-      modules = [./NVF.nix];
+      modules = [./main.nix];
 
       extraSpecialArgs = {inherit qml-go-lsp;};
     };
+
+    minimal = nvf.lib.neovimConfiguration {
+      inherit pkgs;
+      modules = [./minimal.nix];
+    };
   in {
-    packages.${system}.default = Neovim.neovim;
-    nixosModules.default = ./NVF.nix;
+    packages.${system} = {
+      default = main.neovim;
+      minimal = minimal.neovim;
+    };
+
+    nixosModules.default = ./main.nix;
   };
 }
