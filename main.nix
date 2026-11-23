@@ -129,16 +129,17 @@
       trouble.enable = true;
     };
 
-    autocomplete.nvim-cmp = {
+    autocomplete.blink-cmp = {
       enable = true;
-      sources = {
-        buffer = "[Buffer]";
-        path = "[Path]";
-        nvim_lsp = "[LSP]";
-        luasnip = "[Snippet]";
-        snippet = "[Snippet]";
+
+      friendly-snippets.enable = true;
+      setupopts = {
+        keymap.preset = "default"; # options: "default", "super-tab", "enter"
+        sources.default = ["lsp" "path" "snippets" "buffer"];
       };
     };
+
+    snippets.luasnip.enable = true;
 
     debugger = {
       nvim-dap = {
@@ -197,7 +198,7 @@
       html = {
         enable = true;
         lsp.enable = true;
-        treesitter.enable = true;
+        format.enable = false;
       };
 
       nix = {
@@ -326,25 +327,33 @@
     vimAlias = true;
 
     options.shiftwidth = 2;
-    luaConfigRC.filetype-tabs = ''
-      local tab_group = vim.api.nvim_create_augroup("FileTypeTabs", { clear = true })
+    # luaConfigRC.filetype-tabs = ''
+    #    local tab_group = vim.api.nvim_create_augroup("FileTypeTabs", { clear = true })
+    #
+    # vim.api.nvim_create_autocmd("FileType", {
+    #   group = tab_group,
+    #   pattern = { "c", "cpp", "python", "go", "rust", "javascript", "js", "qml", "qmljs", "html" },
+    #   callback = function()
+    #     -- Use a scheduled callback to run AFTER other plugins settle down
+    #     vim.schedule(function()
+    #       vim.opt_local.tabstop = 4
+    #       vim.opt_local.softtabstop = 4
+    #       vim.opt_local.shiftwidth = 4
+    #       vim.opt_local.expandtab = true
+    #     end)
+    #   end,
+    # })
+    #'';
 
-      vim.api.nvim_create_autocmd("FileType", {
-        group = tab_group,
-        pattern = { "c", "cpp", "python", "go", "rust", "javascript", "js", "qml", "qmljs" },
-        callback = function()
-          -- Use a scheduled callback to run AFTER other plugins settle down
-          vim.schedule(function()
-            vim.opt_local.tabstop = 4
-            vim.opt_local.softtabstop = 4
-            vim.opt_local.shiftwidth = 4
-            vim.opt_local.expandtab = true
-          end)
-        end,
-      })
-    '';
+    globals = {
+      html_indent_width = 2;
+    };
 
     formatter.conform-nvim.setupOpts = {
+      formatters_by_ft = {
+        html = ["prettier"];
+      };
+
       formatters = {
         clang-format = {
           # This appends the exact 4-space argument to the binary command array
@@ -352,8 +361,17 @@
         };
 
         prettier = {
-          # Make HTML use 2 space tabs
           argsAfter = ["--tab-width" "2"];
+        };
+
+        # Handles: TypeScript (per your languages.typescript.format.type selection)
+        biome = {
+          argsAfter = ["format" "--indent-style" "space" "--indent-width" "4"];
+        };
+
+        # Handles: Python (Matches common NVF Python defaults)
+        ruff_format = {
+          argsAfter = ["--indent-width" "4"];
         };
       };
     };
@@ -379,7 +397,7 @@
       }
 
       {
-        key = "<C-a>";
+        key = "<leader><C-a>";
         mode = "n";
         action = ":lua vim.lsp.buf.code_action()<CR>";
         silent = true;
