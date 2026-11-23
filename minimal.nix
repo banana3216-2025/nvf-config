@@ -129,7 +129,7 @@
       enable = true;
 
       friendly-snippets.enable = true;
-      setupopts = {
+      setupOpts = {
         keymap.preset = "default"; # options: "default", "super-tab", "enter"
         sources.default = ["lsp" "path" "snippets" "buffer"];
       };
